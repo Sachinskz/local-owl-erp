@@ -1,13 +1,38 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import AppLayout from "@/components/layout/AppLayout";
+import Dashboard from "@/components/dashboard/Dashboard";
+import InventoryManagement from "@/components/inventory/InventoryManagement";
+import PointOfSale from "@/components/pos/PointOfSale";
+import Analytics from "@/components/analytics/Analytics";
+import AlertsCenter from "@/components/alerts/AlertsCenter";
+import Forecasting from "@/components/forecasting/Forecasting";
 
 const Index = () => {
+  const [activeTab, setActiveTab] = useState("dashboard");
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case "dashboard":
+        return <Dashboard />;
+      case "inventory":
+        return <InventoryManagement />;
+      case "pos":
+        return <PointOfSale />;
+      case "analytics":
+        return <Analytics />;
+      case "alerts":
+        return <AlertsCenter />;
+      case "forecasting":
+        return <Forecasting />;
+      default:
+        return <Dashboard />;
+    }
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <AppLayout activeTab={activeTab} onTabChange={setActiveTab}>
+      {renderContent()}
+    </AppLayout>
   );
 };
 
