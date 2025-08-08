@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import MetricsCard from "./MetricsCard";
+import DynamicMetricsCard from "./DynamicMetricsCard";
 import { 
   DollarSign, 
   Package, 
@@ -70,35 +70,63 @@ export default function Dashboard() {
 
       {/* Metrics Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <MetricsCard
+        <DynamicMetricsCard
           title="Today's Sales"
-          value="₹6,200"
-          change="+12% from yesterday"
-          changeType="positive"
+          prompt="What are today's total sales in INR?"
           icon={DollarSign}
           variant="success"
+          formatValue={(data) => `₹${data.total_sales?.toLocaleString() || data[Object.keys(data)[0]]?.toLocaleString() || '0'}`}
+          getChange={() => "+12% from yesterday"}
+          getChangeType={() => "positive"}
         />
-        <MetricsCard
+        <DynamicMetricsCard
           title="Total Products"
-          value={248}
-          change="5 low stock items"
-          changeType="negative"
+          prompt="How many unique products are currently in stock?"
           icon={Package}
+          formatValue={(data) => data.product_count?.toString() || data[Object.keys(data)[0]]?.toString() || '0'}
+          getChange={(data) => {
+            const firstRow = data[0] || {};
+            const lowStock = firstRow.low_stock_count || 0;
+            return lowStock > 0 ? `${lowStock} low stock items` : "All items in stock";
+          }}
+          getChangeType={(data) => {
+            const firstRow = data[0] || {};
+            const lowStock = firstRow.low_stock_count || 0;
+            return lowStock > 0 ? "negative" : "positive";
+          }}
         />
-        <MetricsCard
+        <DynamicMetricsCard
           title="Weekly Growth"
-          value="+18.2%"
-          change="Above target"
-          changeType="positive"
+          prompt="What is the percentage increase or decrease in sales compared to last week?"
           icon={TrendingUp}
+          formatValue={(data) => {
+            const firstRow = data[0] || {};
+            const growth = firstRow.growth_percentage || firstRow[Object.keys(firstRow)[0]];
+            return `${growth > 0 ? '+' : ''}${growth}%`;
+          }}
+          getChange={() => "Compared to last week"}
+          getChangeType={(data) => {
+            const firstRow = data[0] || {};
+            const growth = firstRow.growth_percentage || firstRow[Object.keys(firstRow)[0]] || 0;
+            return growth > 0 ? "positive" : growth < 0 ? "negative" : "neutral";
+          }}
         />
-        <MetricsCard
+        <DynamicMetricsCard
           title="Active Alerts"
-          value={3}
-          change="2 critical"
-          changeType="negative"
+          prompt="How many active alerts or critical issues are there in the system?"
           icon={AlertTriangle}
           variant="warning"
+          formatValue={(data) => data.alert_count?.toString() || data[Object.keys(data)[0]]?.toString() || '0'}
+          getChange={(data) => {
+            const firstRow = data[0] || {};
+            const critical = firstRow.critical_count || 0;
+            return critical > 0 ? `${critical} critical` : "No critical issues";
+          }}
+          getChangeType={(data) => {
+            const firstRow = data[0] || {};
+            const critical = firstRow.critical_count || 0;
+            return critical > 0 ? "negative" : "positive";
+          }}
         />
       </div>
 

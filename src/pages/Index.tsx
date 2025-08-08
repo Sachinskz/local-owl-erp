@@ -6,6 +6,9 @@ import PointOfSale from "@/components/pos/PointOfSale";
 import Analytics from "@/components/analytics/Analytics";
 import AlertsCenter from "@/components/alerts/AlertsCenter";
 import Forecasting from "@/components/forecasting/Forecasting";
+import CustomQuery from "@/components/query/CustomQuery";
+import BIInsights from "@/components/insights/BIInsights";
+import ApiSetup from "@/components/setup/ApiSetup";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -24,6 +27,12 @@ const Index = () => {
         return <AlertsCenter />;
       case "forecasting":
         return <Forecasting />;
+      case "custom-query":
+        return <CustomQuery />;
+      case "bi-insights":
+        return <BIInsights />;
+      case "api-setup":
+        return <ApiSetup />;
       default:
         return <Dashboard />;
     }

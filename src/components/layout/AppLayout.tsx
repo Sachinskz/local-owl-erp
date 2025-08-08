@@ -10,7 +10,9 @@ import {
   Menu,
   TrendingUp,
   Users,
-  Settings
+  Settings,
+  Search,
+  Brain
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -27,6 +29,9 @@ const navigation = [
   { id: "analytics", name: "Analytics", icon: BarChart3 },
   { id: "forecasting", name: "Forecasting", icon: TrendingUp },
   { id: "alerts", name: "Alerts", icon: Bell },
+  { id: "custom-query", name: "Custom Query", icon: Search },
+  { id: "bi-insights", name: "BI Insights", icon: Brain },
+  { id: "api-setup", name: "API Setup", icon: Settings },
 ];
 
 export default function AppLayout({ children, activeTab, onTabChange }: AppLayoutProps) {
@@ -69,13 +74,9 @@ export default function AppLayout({ children, activeTab, onTabChange }: AppLayou
       </nav>
 
       <div className="p-4 border-t border-sidebar-border">
-        <Button 
-          variant="ghost" 
-          className="w-full justify-start gap-3 text-sidebar-foreground hover:bg-sidebar-accent"
-        >
-          <Settings className="h-5 w-5" />
-          Settings
-        </Button>
+        <div className="text-xs text-sidebar-foreground/60 px-3 py-2">
+          ERP System v1.0
+        </div>
       </div>
     </div>
   );
