@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, Package, Users, DollarSign, AlertTriangle, Loader2 } from "lucide-react";
 import { useAutoRefresh } from "@/hooks/useAutoRefresh";
+import { FallbackDataService } from "@/services/fallbackData";
 
 interface InsightCard {
   category: "Sales" | "Inventory" | "Customer" | "Finance";
@@ -30,6 +31,7 @@ export default function BIInsights() {
     prompt: "Give me a table of BI insights including sales trends, slow-moving stock, restocking recommendations, customer lifetime value, and profit margins for the last 7 days.",
     interval: 60000, // 60 seconds
     enabled: true,
+    fallbackMethod: FallbackDataService.getBIInsights,
   });
 
   const processInsights = (rawData: any[]): InsightCard[] => {

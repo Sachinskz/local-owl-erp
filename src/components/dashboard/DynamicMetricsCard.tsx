@@ -13,6 +13,7 @@ interface DynamicMetricsCardProps {
   formatValue?: (value: any) => string;
   getChange?: (data: any[]) => string;
   getChangeType?: (data: any[]) => "positive" | "negative" | "neutral";
+  fallbackMethod?: () => Promise<any[]>;
 }
 
 export default function DynamicMetricsCard({
@@ -23,7 +24,8 @@ export default function DynamicMetricsCard({
   className,
   formatValue,
   getChange,
-  getChangeType
+  getChangeType,
+  fallbackMethod
 }: DynamicMetricsCardProps) {
   const [displayValue, setDisplayValue] = useState<string>("-");
   const [change, setChange] = useState<string>("");
@@ -33,6 +35,7 @@ export default function DynamicMetricsCard({
     prompt,
     interval: 60000, // 60 seconds
     enabled: true,
+    fallbackMethod,
   });
 
   useEffect(() => {

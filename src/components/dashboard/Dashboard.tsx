@@ -1,6 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import DynamicMetricsCard from "./DynamicMetricsCard";
+import { FallbackDataService } from "@/services/fallbackData";
+import { useAutoRefresh } from "@/hooks/useAutoRefresh";
 import { 
   DollarSign, 
   Package, 
@@ -52,6 +54,21 @@ const categoryData = [
 ];
 
 export default function Dashboard() {
+  // Dynamic chart data
+  const { data: salesData } = useAutoRefresh({
+    prompt: "Get weekly sales data with daily totals and targets",
+    interval: 60000,
+    enabled: true,
+    fallbackMethod: FallbackDataService.getWeeklySalesData,
+  });
+
+  const { data: topProductsData } = useAutoRefresh({
+    prompt: "Get top 5 selling products with sales numbers",
+    interval: 60000,
+    enabled: true,
+    fallbackMethod: FallbackDataService.getTopProducts,
+  });
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -75,6 +92,7 @@ export default function Dashboard() {
           prompt="What are today's total sales in INR?"
           icon={DollarSign}
           variant="success"
+          fallbackMethod={FallbackDataService.getTodaysSales}
           formatValue={(data) => `₹${data.total_sales?.toLocaleString() || data[Object.keys(data)[0]]?.toLocaleString() || '0'}`}
           getChange={() => "+12% from yesterday"}
           getChangeType={() => "positive"}
@@ -83,6 +101,7 @@ export default function Dashboard() {
           title="Total Products"
           prompt="How many unique products are currently in stock?"
           icon={Package}
+          fallbackMethod={FallbackDataService.getProductCount}
           formatValue={(data) => data.product_count?.toString() || data[Object.keys(data)[0]]?.toString() || '0'}
           getChange={(data) => {
             const firstRow = data[0] || {};
@@ -99,6 +118,7 @@ export default function Dashboard() {
           title="Weekly Growth"
           prompt="What is the percentage increase or decrease in sales compared to last week?"
           icon={TrendingUp}
+          fallbackMethod={FallbackDataService.getWeeklyGrowth}
           formatValue={(data) => {
             const firstRow = data[0] || {};
             const growth = firstRow.growth_percentage || firstRow[Object.keys(firstRow)[0]];
@@ -116,6 +136,7 @@ export default function Dashboard() {
           prompt="How many active alerts or critical issues are there in the system?"
           icon={AlertTriangle}
           variant="warning"
+          fallbackMethod={FallbackDataService.getActiveAlerts}
           formatValue={(data) => data.alert_count?.toString() || data[Object.keys(data)[0]]?.toString() || '0'}
           getChange={(data) => {
             const firstRow = data[0] || {};
@@ -142,7 +163,7 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={salesData}>
+              <LineChart data={salesData || []}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" />
                 <YAxis stroke="hsl(var(--muted-foreground))" />
@@ -182,7 +203,7 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={topProducts} layout="horizontal">
+              <BarChart data={topProductsData || []} layout="horizontal">
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis type="number" stroke="hsl(var(--muted-foreground))" />
                 <YAxis dataKey="name" type="category" stroke="hsl(var(--muted-foreground))" width={80} />
